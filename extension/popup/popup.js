@@ -18,6 +18,51 @@ let editSelectedStatus = 'Applied';
 let allApplications = [];
 let isManualMode = false;
 
+document.getElementById('btn-google').addEventListener('click', async () => {
+  const redirectUri = chrome.identity.getRedirectURL();
+
+  const authUrl = `http://localhost:8000/user/auth/google/start/?redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+  chrome.identity.launchWebAuthFlow(
+    {
+      url: authUrl,
+      interactive: true,
+    },
+    async (redirectedTo) => {
+      if (chrome.runtime.lastError || !redirectedTo) {
+        console.error(chrome.runtime.lastError);
+        alert("Google login failed ❌");
+        return;
+      }
+
+      console.log("Redirect URL:", redirectedTo);
+
+      const url = new URL(redirectedTo);
+      const token = url.searchParams.get("token");
+
+      if (!token) {
+        alert("No token received ❌");
+        return;
+      }
+
+      console.log("✅ Token:", token);
+
+      // store token
+      await chrome.storage.local.set({ token });
+
+      // OPTIONAL: fetch user from backend
+      const res = await fetch("http://localhost:8000/user/me/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const user = await res.json();
+
+      showMain(user);
+    }
+  );
+});
 // ─── Init ───
 document.addEventListener('DOMContentLoaded', async () => {
   await checkAuth();

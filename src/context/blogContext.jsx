@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useAuth } from "./authContext";
+import api from "../utils/api";
 
 const BlogContext = createContext();
 
@@ -8,34 +9,46 @@ export const BlogProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-// const fetchBlogs = useCallback(async () => {
-//     if (blogs.length > 0) {
-//       setLoading(false);
-//       return;
-//     }
-//     setLoading(true);
-//     try {
-//       const res = await fetch("http://127.0.0.1:8000/api/blogs/");
-//       const data = await res.json();
-//       setBlogs(data);
-//     } catch (err) {
-//       console.error(err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   }, [blogs.length]);
+const fetchBlogs = useCallback(async () => {
+    if (blogs.length > 0) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const res =  await api("get","api/blogs/");
+      const data = res.data;
+      setBlogs(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [blogs.length]);
 
+
+ const fetchBlog=async(id)=>{
+try {
+  
+     const res=await api("get",`api/blogs/${id}/`);
+     const data=res.data;
+        console.log(data);
+       
+  } catch (error) {
+     console.error(error);
+    
+  }
+  };
   // useEffect(() => {
   //   fetchBlogs();
   // }, [fetchBlogs]);
 
   const addBlog = async (title, blogtext) => {
     try {
-      await fetch("http://127.0.0.1:8000/api/blogs/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, blogtext, U_ID: user?.id }),
-      });
+   
+      const res=await api("post","api/blogs/",{
+        title,blogtext, U_ID: user?.id 
+      })
       await fetchBlogs();
     } catch (err) {
       console.error(err);

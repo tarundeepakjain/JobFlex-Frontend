@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../context/authContext";
 import { useBlog } from "../context/blogContext";
+import api from "../utils/api";
 export default function Blog() {
   
   const [loading, setLoading] = useState(true);
@@ -17,21 +18,21 @@ export default function Blog() {
   const { user } = useAuth();
 // console.log("USER:", user);
 console.log(blogs);
-  const fetchBlogs = () => {
-    fetch("http://127.0.0.1:8000/api/blogs/")
-      .then((res) => res.json())
-      .then((data) => {
-        setBlogs(data);
+  const fetchBlogs = async() => {
+    try {
+      const res=await api("get","api/blogs/");
+      console.log("res:",res);
+      const data=res.data;
+    setBlogs(data);
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
+    } catch (error) {
+       console.error(error);
         setLoading(false);
-      });
+    }
   };
 
   useEffect(() => {
-    if(blogs.length>0) setLoading(false);
+    // if(blogs.length>0) setLoading(false);
     fetchBlogs();
   }, []);
 

@@ -3,9 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { useAuth } from "../context/authContext";
 import { useBlog } from "../context/blogContext";
+import api from "../utils/api";
 export default function BlogDetail() {
   const {id}=useParams();
- const {blogs}=useBlog();
+//  const {blogs}=useBlog();
+const [blog,setBlog]=useState();
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -13,39 +15,46 @@ export default function BlogDetail() {
   const [upvoteCount, setUpvoteCount] = useState(0);
   const navigate = useNavigate();
   const { user } = useAuth();
-
-  // const fetchBlog = () => {
-  //   fetch(`http://127.0.0.1:8000/api/blogs/${id}/`)
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setBlog(data);
-  //       setUpvoteCount(data.upvote_count || 0);
-  //       setLoading(false);
-  //     })
-  //     .catch((err) => {
-  //       console.error(err);
-  //       setLoading(false);
-  //     });
-  // };
+useEffect(()=>{
+const fetchBlog = async() => {
+  try {
+  
+     const res=await api("get",`api/blogs/${id}/`);
+     const data=res.data;
+        console.log(data);
+        setBlog(data);
+        setUpvoteCount(data.upvote_count || 0);
+        setUpvoted(data.is_upvoted);
+        setLoading(false);
+  } catch (error) {
+     console.error(error);
+        setLoading(false);
+  }
+  };
+  fetchBlog();
+},[])
+  
 
   // useEffect(() => {
   //   fetchBlog();
   // }, [id]);
-  useEffect(() => {
-  if (blogs.length > 0) {
-    setLoading(false);
-  }
-}, [blogs]);
-const blog=blogs.find(b => b.id == id);
+//   useEffect(() => {
+//   if (blogs.length > 0) {
+//     setLoading(false);
+//   }
+// }, [blogs]);
+// const blog=blogs.find(b => b.id == id);
   const handleUpvote = async () => {
-    const res = await fetch(`http://127.0.0.1:8000/api/blogs/${id}/upvote/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ U_ID: user?.U_ID || user?.id || 1 }),
-    });
-    const data = await res.json();
+    try {
+       const res = await api("post",`api/blogs/${id}/upvote/`);
+    const data = res.data;
     setUpvoted(data.upvoted);
     setUpvoteCount(data.upvote_count);
+    } catch (error) {
+      console.log(error);
+    }
+   
+
   };
 
   const handleComment = async () => {

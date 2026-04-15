@@ -94,7 +94,37 @@ html, body {
 }
 
 .auth-content { position: relative; z-index: 1; width: 100%; }
+.btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: white;
+  color: #333;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 10px;
+}
 
+.btn-google img {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-google:hover {
+  background: #f5f5f5;
+}
+
+.divider {
+  text-align: center;
+  margin: 10px 0;
+  color: #aaa;
+  font-size: 12px;
+}
 .logo {
   display: flex;
   align-items: center;

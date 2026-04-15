@@ -9,11 +9,15 @@
     "activeTab",
     "notifications",
     "identity",
-    "scripting"
+    "scripting",
+    "identity"
   ],
   "host_permissions": [
     "https://*/*",
-    "http://*/*"
+    "http://*/*",
+    "http://localhost:8000/*",
+    "http://localhost:5173/*"
+  
   ],
   "background": {
     "service_worker": "background/service_worker.js"
