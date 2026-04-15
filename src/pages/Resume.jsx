@@ -170,7 +170,7 @@ export default function Resume() {
                 <CheckCircle2 size={18} className="text-emerald-500 flex-shrink-0" />
               </div>
               <button
-                onClick={() => setResumeFile(null)}
+                onClick={() => setStoredResume(null)}
                 className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-zinc-700 transition-colors font-medium"
               >
                 <RefreshCw size={12} /> Replace with a different resume
